@@ -1,12 +1,18 @@
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
-import './example/my_widgets.dart';
+// import './example/my_widgets.dart';
+// import 'list_views.dart';
+import 'navigation/screen_one.dart';
 
 main() {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: MyStateFulWidget(),
-      home: MyWidgets(),
+      // home: MyWidgets(),
+      // home: ListViews(),
+      home: ScreenOne(),
     ),
   );
 }

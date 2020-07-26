@@ -9,55 +9,79 @@ class MyWidgets extends StatelessWidget {
       appBar: AppBar(
         title: Text("Widgtes"),
       ),
-      body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 50,
-            height: 50,
-            color: Colors.green,
-          ),
-          Container(
-            width: 50,
-            height: 50,
-            color: Colors.yellow,
-          ),
-          Container(
-            width: 50,
-            height: 50,
-            color: Colors.red,
-          ),
-          Image.network(
-            "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png",
-            width: 75,
-            height: 75,
-          ),
-          Image.asset(
-            "assets/download.png",
-            width: 75,
-            height: 75,
-          ),
-          Card(
-            // // color: Colors.get,
-            child: Padding(
-              padding: EdgeInsets.all(50),
-              child: Text(
-                "I am Card",
-                style: TextStyle(fontSize: 25),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 50,
+                height: 50,
+                color: Colors.green,
               ),
-            ),
-          ),
-          Card(
-            // // color: Colors.get,
-            child: Padding(
-              padding: EdgeInsets.all(50),
-              child: Text(
-                "I am Card 2",
-                style: TextStyle(fontSize: 25),
+              Container(
+                width: 50,
+                height: 50,
+                color: Colors.yellow,
               ),
-            ),
+              Container(
+                width: 50,
+                height: 50,
+                color: Colors.red,
+              ),
+              Image.network(
+                "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png",
+                width: 75,
+                height: 75,
+              ),
+              Image.asset(
+                "assets/download.png",
+                width: 75,
+                height: 75,
+              ),
+              Card(
+                // // color: Colors.get,
+                child: Padding(
+                  padding: EdgeInsets.all(50),
+                  child: Text(
+                    "I am Card",
+                    style: TextStyle(fontSize: 25),
+                  ),
+                ),
+              ),
+              Card(
+                // // color: Colors.get,
+                child: Padding(
+                  padding: EdgeInsets.all(50),
+                  child: Text(
+                    "I am Card 2",
+                    style: TextStyle(fontSize: 25),
+                  ),
+                ),
+              ),
+              Card(
+                // // color: Colors.get,
+                child: Padding(
+                  padding: EdgeInsets.all(50),
+                  child: Text(
+                    "I am Card 2",
+                    style: TextStyle(fontSize: 25),
+                  ),
+                ),
+              ),
+              Card(
+                // // color: Colors.get,
+                child: Padding(
+                  padding: EdgeInsets.all(50),
+                  child: Text(
+                    "I am Card 2",
+                    style: TextStyle(fontSize: 25),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
