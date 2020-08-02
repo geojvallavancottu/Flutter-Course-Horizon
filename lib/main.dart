@@ -1,39 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import './forms/home.dart';
 
-main() {
-  print("Hello");
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Home"),
-        ),
-        body: Column(
-          children: <Widget>[
-            Start("Geo"),
-            Start("Jacob"),
-            Start("James"),
-          ],
-        ),
-      ),
-    ),
-  );
+void main() {
+  runApp(MyApp());
 }
 
-class Start extends StatelessWidget {
-  final String text;
-
-  Start(this.text);
-  
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Hello $text",
-        textDirection: TextDirection.ltr,
-        style: TextStyle(fontSize: 30.0),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: GoogleFonts.poppinsTextTheme(
+            Theme.of(context).textTheme,
+          ),),
+      home: Home(),
     );
   }
 }
-
