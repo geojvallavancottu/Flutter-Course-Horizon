@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../forms/home.dart';
 import '../database/db_helper.dart';
 import '../models/task.dart';
 
@@ -45,11 +46,15 @@ class _AddTaskState extends State<AddTask> {
   submit() {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      // print(taskname);
-      // print(taskdate);
       Task t = Task(null, taskname, taskdate, 0);
       dbHelper.save(t);
-      dbHelper.getTasks();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Home(),
+        ),
+      );
+      // dbHelper.getTasks();
     }
   }
 

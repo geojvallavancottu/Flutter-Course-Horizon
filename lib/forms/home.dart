@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/task.dart';
+import '../database/db_helper.dart';
 import './add_task.dart';
 
 class Home extends StatefulWidget {
@@ -9,10 +11,82 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool c1 = false;
-  bool c2 = false;
-  bool c3 = false;
-  bool c4 = false;
+  int taskInCompleted, totalTasks;
+  var dbHelper;
+  bool isTaskLoding = true;
+  Future<List<Task>> tasks;
+  @override
+  void initState() {
+    super.initState();
+    dbHelper = DBHelper();
+    getAllTasks();
+  }
+
+  getAllTasks() async {
+    setState(() {
+      isTaskLoding = true;
+    });
+    int total = await dbHelper.totalTasks();
+    int incompleted = await dbHelper.countInCompleted();
+    setState(() {
+      tasks = dbHelper.getTasks();
+      taskInCompleted = incompleted;
+      totalTasks = total;
+      isTaskLoding = false;
+    });
+  }
+
+  Dismissible buildTaskWidget(Task task) {
+    return Dismissible(
+      onDismissed: (direction) {
+        dbHelper.delete(task.id);
+        getAllTasks();
+      },
+      background: Container(
+        color: Colors.red,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      key: Key("${task.id}"),
+      child: ListTile(
+        onTap: () {
+          if (task.iscompleted == 1) {
+            Task t = Task(task.id, task.taskname, task.taskdate, 0);
+            dbHelper.update(t);
+            getAllTasks();
+          } else if (task.iscompleted == 0) {
+            Task t = Task(task.id, task.taskname, task.taskdate, 1);
+            dbHelper.update(t);
+            getAllTasks();
+          }
+        },
+        leading: task.iscompleted == 0
+            ? Icon(Icons.check_box_outline_blank)
+            : SizedBox(),
+        title: Text(
+          "${task.taskname}",
+          style: task.iscompleted == 0
+              ? TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                )
+              : TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red,
+                  decoration: TextDecoration.lineThrough,
+                ),
+        ),
+        subtitle: Text("${task.taskdate}"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +137,7 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.only(left: 40.0),
                 child: Text(
-                  "2 of 5 tasks",
+                  "$taskInCompleted of $totalTasks tasks",
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.normal,
@@ -79,87 +153,33 @@ class _HomeState extends State<Home> {
                   height: 1,
                 ),
               ),
-              ListTile(
-                leading: Checkbox(
-                  onChanged: (bool value) {
-                    setState(() {
-                      c1 = value;
-                    });
-                  },
-                  value: c1,
-                ),
-                title: Text(
-                  "Buy Milk",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                subtitle: Text("Mon, Apr 30"),
-              ),
-              Dismissible(
-                // secondaryBackground: Container(
-                //   color: Colors.orange,
-                //   child: Align(
-                //     // alignment: Alignment.centerLeft,
-                //     child: Icon(
-                //       Icons.delete,
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                // ),
-                background: Container(
-                  color: Colors.red,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.white,
+              // buildTaskWidget(),
+              isTaskLoding
+                  ? Center(
+                      child: SizedBox(),
+                    )
+                  : FutureBuilder<List<Task>>(
+                      future: tasks,
+                      builder: (context, snapshot) {
+                        if (snapshot.data == null ||
+                            snapshot.data.length == 0) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("NO TASKS ADDED"),
+                            ),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return Column(
+                            children: snapshot.data
+                                .map((task) => buildTaskWidget(task))
+                                .toList(),
+                          );
+                        }
+                        return Container();
+                      },
                     ),
-                  ),
-                ),
-                key: Key('a'),
-                child: ListTile(
-                  leading: Checkbox(
-                    onChanged: (bool value) {
-                      setState(() {
-                        c2 = value;
-                      });
-                    },
-                    value: c2,
-                  ),
-                  title: Text(
-                    "Publish Firday blog post",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text("Mon, Apr 30"),
-                ),
-              ),
-              ListTile(
-                leading: SizedBox(),
-                title: Text(
-                  "Wash Cloths",
-                  style: TextStyle(
-                    decoration: TextDecoration.lineThrough,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFe13535),
-                  ),
-                ),
-                subtitle: Text("Mon, Apr 30"),
-              ),
-              ListTile(
-                leading: Checkbox(
-                  onChanged: (bool value) {
-                    setState(() {
-                      c4 = value;
-                    });
-                  },
-                  value: c4,
-                ),
-                title: Text(
-                  "Practice Flutter",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                subtitle: Text("Mon, Apr 30"),
-              ),
             ],
           ),
         ));

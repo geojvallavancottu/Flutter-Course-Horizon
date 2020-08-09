@@ -48,8 +48,6 @@ class DBHelper {
     var dbClient = await db;
     List<Map> maps = await dbClient
         .query(TABLE, columns: [ID, TASKNAME, TASKDATE, ISCOMPLETED]);
-    print('Maps');
-    print(maps);
     List<Task> tasks = [];
     if (maps.length > 0) {
       for (int i = 0; i < maps.length; i++) {
@@ -57,5 +55,36 @@ class DBHelper {
       }
     }
     return tasks;
+  }
+
+  Future<int> delete(int id) async {
+    var dbClient = await db;
+    return await dbClient.delete(TABLE, where: '$ID = ?', whereArgs: [id]);
+  }
+
+  Future<int> update(Task task) async {
+    var dbClient = await db;
+    return await dbClient
+        .update(TABLE, task.toMap(), where: '$ID = ?', whereArgs: [task.id]);
+  }
+
+  Future close() async {
+    var dbClient = await db;
+    dbClient.close();
+  }
+
+  Future<int> countInCompleted() async {
+    var dbClient = await db;
+    int val = 0;
+    var count = await dbClient
+        .rawQuery("SELECT COUNT(*) FROM $TABLE WHERE $ISCOMPLETED = $val");
+    return Sqflite.firstIntValue(count);
+  }
+
+  Future<int> totalTasks() async {
+    var dbClient = await db;
+    var count = await dbClient.rawQuery("SELECT COUNT(*) FROM $TABLE");
+    print(count);
+    return Sqflite.firstIntValue(count);
   }
 }
