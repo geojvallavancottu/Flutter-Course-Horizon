@@ -1,27 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../forms/home.dart';
+import 'package:todo_app/models/task.dart';
 import '../database/db_helper.dart';
-import '../models/task.dart';
 
-class AddTask extends StatefulWidget {
-  AddTask({Key key}) : super(key: key);
+class EditTask extends StatefulWidget {
+  final String taskname, taskdate;
+  final int iscompleted, id;
+  // EditTask({this.id,this.taskname,this.taskdate,this.iscompleted}); //use curly bracis when the argments is optional
+  EditTask(this.id, this.taskname, this.taskdate, this.iscompleted);
 
   @override
-  _AddTaskState createState() => _AddTaskState();
+  _EditTaskState createState() => _EditTaskState();
 }
 
-class _AddTaskState extends State<AddTask> {
+class _EditTaskState extends State<EditTask> {
   String taskname, taskdate;
+  int id, iscompleted;
   TextEditingController controller = TextEditingController();
+  TextEditingController controller1 = TextEditingController();
   final formKey = GlobalKey<FormState>();
   var date;
   var dbHelper;
+
   @override
   void initState() {
     super.initState();
-    dbHelper = DBHelper();
-    dbHelper.getTasks();
+    setState(() {
+      dbHelper = DBHelper();
+      taskname = widget.taskname;
+      taskdate = widget.taskdate;
+      id = widget.id;
+      iscompleted = widget.iscompleted;
+
+      controller.text = taskdate;
+      controller1.text = taskname;
+    });
   }
 
   Future selectDate() async {
@@ -43,34 +57,28 @@ class _AddTaskState extends State<AddTask> {
     }
   }
 
-  submit() {
+  update() {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      Task t = Task(null, taskname, taskdate, 0);
-      dbHelper.save(t);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Home(),
-        ),
-      );
-      // dbHelper.getTasks();
+      Task t = Task(id, taskname, taskdate, iscompleted);
+      dbHelper.update(t);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Home(),
-          ),
-        );
-      },
-      child: Scaffold(
-        body: SingleChildScrollView(
+    return Scaffold(
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(),
+            ),
+          );
+        },
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -96,7 +104,7 @@ class _AddTaskState extends State<AddTask> {
               ),
               Center(
                 child: Text(
-                  "Add Task",
+                  "Edit Task",
                   style: TextStyle(
                       fontSize: 40,
                       color: Colors.black,
@@ -118,6 +126,7 @@ class _AddTaskState extends State<AddTask> {
                         style: TextStyle(color: Colors.black, fontSize: 16),
                       ),
                       TextFormField(
+                        controller: controller1,
                         decoration: InputDecoration(hintText: "Your task name"),
                         validator: (arg) {
                           if (arg.length == 0) {
@@ -162,10 +171,10 @@ class _AddTaskState extends State<AddTask> {
                           height: 50,
                           child: RaisedButton(
                             color: Colors.orange,
-                            child: Text("Add Task",
+                            child: Text("Update Task",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18)),
-                            onPressed: submit,
+                            onPressed: update,
                           ),
                         ),
                       )
